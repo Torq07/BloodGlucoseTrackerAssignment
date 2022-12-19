@@ -24,10 +24,10 @@ LASTNAMES = [
     4.times do 
       user.medical_records.create(
         created_at:rand(day.beginning_of_day..day.end_of_day), #set random time during the day span
-        level: (20..600).to_a.sample #set random level
+        level: rand(20..600) #set random level
       ) 
     end
 
   end
-  puts "User #{user.id} genetated"
+  puts "User #{user.id} generated"
 }

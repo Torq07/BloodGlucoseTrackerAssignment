@@ -1,5 +1,6 @@
 class MedicalRecordsController < ApplicationController
   before_action :set_medical_record, only: %i[ show edit update destroy ]
+  
 
   # GET /medical_records or /medical_records.json
   def index
@@ -23,8 +24,11 @@ class MedicalRecordsController < ApplicationController
   def create
     @medical_record = MedicalRecord.new(medical_record_params)
 
+
     respond_to do |format|
-      if @medical_record.save
+      if daily_limit_exceed 
+        format.html { redirect_to user_url(@medical_record.user), notice: "Daily limit exceed"}
+      elsif @medical_record.save 
         format.html { redirect_to medical_record_url(@medical_record), notice: "Medical record was successfully created." }
         format.json { render :show, status: :created, location: @medical_record }
       else
@@ -66,5 +70,14 @@ class MedicalRecordsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def medical_record_params
       params.require(:medical_record).permit(:user_id, :level)
+    end
+
+    def daily_limit_exceed
+      MedicalRecord.where(user_id:medical_record_params["user_id"])
+        .order(created_at: :desc)
+        .take(4)
+        .first
+        .created_at
+        .to_i > Date.today.beginning_of_day.to_i
     end
 end
