@@ -1,0 +1,19 @@
+<div id="<%= dom_id user %>">
+  <p>
+    <strong>Firstname:</strong>
+    <%= user.firstname %>
+  </p>
+
+  <p>
+    <strong>Lastname:</strong>
+    <%= user.lastname %>
+  </p>
+
+
+  <% user.medical_records.each do |medical_record| %>
+    <ul>
+      <li> <%= medical_record.level %> </li>
+      <li> <%= medical_record.created_at%> </li>
+    </ul>
+  <% end %>
+</div>

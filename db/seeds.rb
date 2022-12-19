@@ -5,3 +5,29 @@
 #
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
+
+FIRSTNAMES = [
+  "Simon", "Genevieve", "Shirley", "Ryland", "Kayden", "Annabel", "Mireya", "Shyanne", "Ashtyn", "Kaitlin", "Jessie", "Nevaeh"
+]
+
+LASTNAMES = [
+  "Knapp", "Hurley", "Armstrong", "Durham", "Randolph", "Kelly", "Barker", "Farmer", "Little", "Buck", "Mccann", "Harrington"
+]
+
+5.times {
+  user = User.create(firstname:FIRSTNAMES.sample, lastname:LASTNAMES.sample)
+
+  #create medical record for @user for last 45 days
+  (Date.today - 45.days..Date.today).each do |day|
+
+    #create 4 recods per day
+    4.times do 
+      user.medical_records.create(
+        created_at:rand(day.beginning_of_day..day.end_of_day), #set random time during the day span
+        level: (20..600).to_a.sample #set random level
+      ) 
+    end
+
+  end
+  puts "User #{user.id} genetated"
+}
