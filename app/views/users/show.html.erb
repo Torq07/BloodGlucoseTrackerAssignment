@@ -1,10 +1,23 @@
-<p style="color: green"><%= notice %></p>
+<div class='row m-2'>
+  <p style="color: green"><%= notice %></p>
+  <%= render @user %>
+  
+  <div class='d-flex justify-content-center'>
+    <%= link_to "Edit this user", edit_user_path(@user), class:'btn btn-primary mx-1' %> 
+    <%= link_to "Back to users", users_path, class:'btn btn-primary mx-1'%>
+    <%= button_to "Destroy this user", @user, method: :delete, class:'btn-danger btn mx-1'%> 
+    
+  </div>
 
-<%= render @user %>
+  <%= form_with url: medical_records_path, 
+      method: :post, 
+      local: true , 
+      scope: :medical_record do |f|%>
+    <div class="input-group m-2">
+      <%= f.text_field :level, placeholder:"Enter your Blood glucose Level", class:"form-control"%>
+      <%= f.hidden_field :user_id, :value => @user.id, class:"form-control"  %>
+      <%= f.button "Add", type: "submit", class:"btn btn-outline-secondary", id:"button-addon2"%>
+    </div>
+  <% end %>
 
-<div>
-  <%= link_to "Edit this user", edit_user_path(@user) %> |
-  <%= link_to "Back to users", users_path %>
-
-  <%= button_to "Destroy this user", @user, method: :delete %>
 </div>
