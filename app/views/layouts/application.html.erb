@@ -11,6 +11,12 @@
   </head>
 
   <body class='container-fluid'>
+    <%= render "layouts/navbar" %>
+    <% if notice %>
+      <div class="alert alert-info m-2" role="alert">
+        <%= notice %>
+      </div>
+    <% end %>
     <%= yield %>
   </body>
 </html>

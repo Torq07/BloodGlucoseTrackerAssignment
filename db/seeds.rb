@@ -18,7 +18,7 @@ LASTNAMES = [
   user = User.create(firstname:FIRSTNAMES.sample, lastname:LASTNAMES.sample)
 
   #create medical record for @user for last 45 days
-  (Date.today - 45.days..Date.today).each do |day|
+  (Date.today - 60.days..Date.today).each do |day|
 
     #create 4 recods per day
     4.times do 

@@ -1,14 +1,46 @@
-<p style="color: green"><%= notice %></p>
+<h1><%= "#{@user.firstname.capitalize} #{@user.lastname.capitalize} Report"%></h1>
 
-<h1>Medical records</h1>
-
-<div id="medical_records">
-  <% @medical_records.each do |medical_record| %>
-    <%= render medical_record %>
-    <p>
-      <%= link_to "Show this medical record", medical_record %>
-    </p>
-  <% end %>
+<div class="btn-toolbar mb-3 justify-content-center" role="toolbar" aria-label="Toolbar with button groups">
+  <div class="btn-group me-2" role="group" aria-label="First group">
+    <%= link_to "Daily", medical_records_path(:user_id => @user.id, :from => Date.today, :to=>Date.today), class:'btn btn-outline-primary' %>
+    <%= link_to "Monthly", medical_records_path(:user_id => @user.id, :from => Date.today.last_month.beginning_of_month, :to=>Date.today.last_month.end_of_month), class:'btn btn-outline-primary' %>
+  </div>
+  <div class="input-group ">
+    <%= form_with url: medical_records_path, method: :get do |f|%>
+      <div class="input-group">
+        <%= f.date_field :to, class:"form-control" %>
+        <%= f.hidden_field :from, :value => Date.today.beginning_of_month, class:"form-control"  %>
+        <%= f.hidden_field :user_id, :value => @user.id, class:"form-control"  %>
+        <%= f.submit "Month To Date", class:"btn btn-outline-primary"%>
+      </div>
+    <% end %>
+  </div>
+</div>
+  
 </div>
 
-<%= link_to "New medical record", new_medical_record_path %>
+
+<div id="medical_records">
+  <div class='d-flex  justify-content-center'>
+    <div class="mx-1"><strong>Mininmal</strong>: <%= @min%></div> |
+    <div class="mx-1"><strong>Maximum</strong>: <%= @max%></div> |
+    <div class="mx-1"><strong>Average</strong>: <%= @avg%></div>
+  </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Date</th>
+        <th scope="col">Level</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @medical_records.each do |medical_record| %>
+        <tr>
+          <td><%= medical_record.created_at.strftime('%F at %T') %></td>
+          <td><%= medical_record.level %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  
+</div>

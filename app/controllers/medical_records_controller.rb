@@ -1,23 +1,35 @@
 class MedicalRecordsController < ApplicationController
   before_action :set_medical_record, only: %i[ show edit update destroy ]
-  
+  before_action :validate_required_input, only: %i[index]
 
   # GET /medical_records or /medical_records.json
   def index
-    @medical_records = MedicalRecord.all
-  end
+    
+      @min = 0
+      @max = 0
+      @avg = 0
+      @user = User.find(params[:user_id])
+      starDate = Date.parse(params[:from]).beginning_of_day
+      endDate = Date.parse(params[:to]).end_of_day
+      range = (starDate..endDate)
 
-  # GET /medical_records/1 or /medical_records/1.json
-  def show
+
+      @medical_records = MedicalRecord.where(
+        user_id:params[:user_id],
+        created_at: range
+      ).order(:created_at)
+
+      if !@medical_records.empty? 
+        @max = @medical_records.pluck(:level).max
+        @min= @medical_records.pluck(:level).min
+        @avg = @medical_records.pluck(:level).inject{ |sum, el| sum + el } / @medical_records.size
+      end
+ 
   end
 
   # GET /medical_records/new
   def new
     @medical_record = MedicalRecord.new
-  end
-
-  # GET /medical_records/1/edit
-  def edit
   end
 
   # POST /medical_records or /medical_records.json
@@ -29,7 +41,8 @@ class MedicalRecordsController < ApplicationController
       if daily_limit_exceed 
         format.html { redirect_to user_url(@medical_record.user), notice: "Daily limit exceed"}
       elsif @medical_record.save 
-        format.html { redirect_to medical_record_url(@medical_record), notice: "Medical record was successfully created." }
+        
+        format.html { redirect_to user_url(@medical_record.user), notice: "Medical record was successfully created." }
         format.json { render :show, status: :created, location: @medical_record }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -72,11 +85,30 @@ class MedicalRecordsController < ApplicationController
       params.require(:medical_record).permit(:user_id, :level)
     end
 
+    def report_params
+      params.permit(:type, :timeframe)
+    end
+
+    def validate_required_input
+      puts params[:to]
+      puts params[:to].present?
+      if params[:from].present? && params[:to].present? && params[:user_id].present?
+        return true
+      elsif !params[:to].present?
+        flash[:notice] = "Report should have end date"
+        redirect_back(fallback_location: root_path)
+      else 
+        redirect_to root_path, notice: "Report should be have user"
+      end
+    end
+
     def daily_limit_exceed
+      return false if MedicalRecord.where(user_id:medical_record_params["user_id"]).count < 4
+      
       MedicalRecord.where(user_id:medical_record_params["user_id"])
         .order(created_at: :desc)
         .take(4)
-        .first
+        .last
         .created_at
         .to_i > Date.today.beginning_of_day.to_i
     end

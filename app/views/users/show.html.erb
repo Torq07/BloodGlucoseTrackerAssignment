@@ -1,23 +1,36 @@
-<div class='row m-2'>
-  <p style="color: green"><%= notice %></p>
-  <%= render @user %>
-  
-  <div class='d-flex justify-content-center'>
-    <%= link_to "Edit this user", edit_user_path(@user), class:'btn btn-primary mx-1' %> 
-    <%= link_to "Back to users", users_path, class:'btn btn-primary mx-1'%>
-    <%= button_to "Destroy this user", @user, method: :delete, class:'btn-danger btn mx-1'%> 
-    
-  </div>
-
+<div class='row'>
+  <div class='d-flex  mt-2 align-items-center'>
+    <div class='mr-auto p-2'>
+      <%= link_to @user do %>
+        <%= @user.firstname.capitalize %> <%= @user.lastname.capitalize %>
+      <% end %>
+    </div>
+    <div class="p-2">
+      <%= link_to medical_records_path(:user_id => @user.id, :from => Date.today, :to=>Date.today), class:'btn btn-warning mx-1' do %> 
+        <i class="bi bi-card-list"></i>
+      <% end %>
+    </div>
+    <div class="p-2">
+      <%= link_to edit_user_path(@user), class:'btn btn-primary mx-1' do %>
+        <i class="bi bi-pen"></i>
+      <% end %>
+    </div>
+    <div class="p-2">
+      <%= button_to @user, method: :delete, class:'btn-danger btn mx-1' do%>
+        <i class="bi bi-trash2"></i>
+      <% end %>
+    </div>
+  </div> 
+</div>
+<div class='row m-1'>
   <%= form_with url: medical_records_path, 
       method: :post, 
       local: true , 
       scope: :medical_record do |f|%>
     <div class="input-group m-2">
-      <%= f.text_field :level, placeholder:"Enter your Blood glucose Level", class:"form-control"%>
+      <%= f.text_field :level, type:'number', placeholder:"Enter your Blood glucose Level", class:"form-control"%>
       <%= f.hidden_field :user_id, :value => @user.id, class:"form-control"  %>
       <%= f.button "Add", type: "submit", class:"btn btn-outline-secondary", id:"button-addon2"%>
     </div>
   <% end %>
-
 </div>

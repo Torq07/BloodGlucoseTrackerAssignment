@@ -1,27 +1,29 @@
-<%= form_with(model: user) do |form| %>
-  <% if user.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+<div class='row m-2'>
+  <%= form_with(model: user) do |form| %>
+    <% if user.errors.any? %>
+      <div class="alert alert-danger m-2" role="alert">
+        <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
 
-      <ul>
-        <% user.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+        <ul>
+          <% user.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="mb-3">
+      <%= form.label :firstname, class:"form-label" %>
+      <%= form.text_field :firstname, class:"form-control"  %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :lastname, class:"form-label" %>
+      <%= form.text_field :lastname, class:"form-control" %>
+    </div>
+
+    <div class="mb-3">
+      <%= form.submit :class =>"btn btn-primary"%>
     </div>
   <% end %>
-
-  <div>
-    <%= form.label :firstname, style: "display: block" %>
-    <%= form.text_field :firstname %>
-  </div>
-
-  <div>
-    <%= form.label :lastname, style: "display: block" %>
-    <%= form.text_field :lastname %>
-  </div>
-
-  <div>
-    <%= form.submit %>
-  </div>
-<% end %>
+</div>
